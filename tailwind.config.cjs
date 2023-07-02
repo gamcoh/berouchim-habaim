@@ -5,17 +5,17 @@ const config = {
 	],
 
 	theme: {
-    colors: {
-      "primary": "#446A68",
-      "green": "#6EA743",
-      "orange": "#F9C74F",
-      "red": "#F94144",
-    },
+		colors: {
+			primary: '#446A68',
+			green: '#6EA743',
+			orange: '#F9C74F',
+			red: '#F94144'
+		},
 		extend: {
-      fontSize: {
-        'xxs': '.55rem',
-      }
-    }
+			fontSize: {
+				xxs: '.55rem'
+			}
+		}
 	},
 
 	plugins: [require('flowbite/plugin')],
