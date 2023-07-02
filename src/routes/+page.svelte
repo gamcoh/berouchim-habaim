@@ -1,6 +1,7 @@
 <script>
 	import { Input } from 'flowbite-svelte';
 	import CustomCard from '$lib/CustomCard.svelte';
+	import { onMount } from 'svelte';
 
 	const ratings = [
 		{ id: 1, name: 'A', value: 'A', updated_at: '2023-04-01', pct: '90%' },
@@ -9,10 +10,37 @@
 	];
 
 	const address = '1 rue de la paix, Paris';
+	const loadAsync = (src) => {
+		const script = document.createElement('script');
+		script.src = src;
+		script.async = true;
+		script.defer = true;
+		document.head.appendChild(script);
+	};
+
+	onMount(() => {
+		// Load the Google Maps Platform JS API script asynchronously.
+		loadAsync(
+			`//maps.googleapis.com/maps/api/js?key=AIzaSyB8mqM0E8jmjvMkQvsqK1BbDaP0heVNuNE&libraries=places&callback=onLoaded`
+		);
+
+		window.onLoaded = () => {
+			const input = document.querySelector('.search-address-input');
+			const autocomplete = new google.maps.places.Autocomplete(input);
+			autocomplete.addListener('place_changed', () => {
+				const place = autocomplete.getPlace();
+				console.log(place);
+			});
+		};
+	});
 </script>
 
 <div class="addresses w-full">
-	<Input type="text" defaultClass="element w-full font-mono" placeholder="Recherchez une adresse">
+	<Input
+		type="text"
+		defaultClass="element w-full font-mono search-address-input"
+		placeholder="Recherchez une adresse"
+	>
 		<svg
 			slot="right"
 			aria-hidden="true"
