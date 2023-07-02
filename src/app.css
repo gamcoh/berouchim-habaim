@@ -49,3 +49,16 @@ input.element:focus {
 	background-color: transparent;
 	border: 0;
 }
+
+.avatar-rating {
+	background-color: rgba(238, 238, 238, 0.2);
+}
+
+@media (max-width: 500px) {
+	body {
+		background-image: url('images/background-mobile.jpg');
+	}
+	.container {
+		margin-top: 50px;
+	}
+}

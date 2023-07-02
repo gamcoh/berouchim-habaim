@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Listgroup, Avatar, Button } from 'flowbite-svelte';
+	import { Listgroup, Avatar, Button, Tooltip } from 'flowbite-svelte';
 
 	export let address: string;
 	export let ratings: object[];
@@ -22,12 +22,32 @@
 		membres de la communauté juive dans leurs recherches.
 	</p>
 
+	<Tooltip
+		triggeredBy="[id^='tooltip-']"
+		arrow={false}
+		class="bg-gray-800 dark:bg-white text-white dark:text-gray-800"
+	>
+		Date de dernière mise à jour.
+	</Tooltip>
 	<Listgroup items={ratings} let:item class="mt-3 bg-transparent">
 		<div class="flex items-center space-x-4">
 			<Avatar class="flex-shrink-0 {rating_colors[item.value]} text-white">{item.name}</Avatar>
 			<div class="flex-1 min-w-0">
 				<p class="text-xxs text-white truncate">
-					Mise à jour le {item.updated_at}
+					{item.updated_at}
+					<span class="text-xxs" id="tooltip-{item.name}">
+						<svg
+							class="w-[12px] inline h-[12px] text-gray-800 dark:text-white"
+							ariaHidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="currentColor"
+							viewBox="0 0 20 20"
+						>
+							<path
+								d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"
+							/>
+						</svg>
+					</span>
 				</p>
 			</div>
 			<div class="inline-flex items-center text-base font-semibold text-white">

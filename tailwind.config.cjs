@@ -14,6 +14,9 @@ const config = {
 		extend: {
 			fontSize: {
 				xxs: '.55rem'
+			},
+			boxShadow: {
+				outline: '0 0 0 3px'
 			}
 		}
 	},
