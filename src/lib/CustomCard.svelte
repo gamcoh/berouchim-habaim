@@ -10,6 +10,23 @@
 		B: 'bg-yellow-500',
 		C: 'bg-red-500'
 	};
+
+	const format_pct = (pct) => {
+		return pct.toFixed(0);
+	};
+
+	// Deduplicate ratings
+	$: deduplicated_ratings = ratings.filter((rating, index, self) => {
+		return index === self.findIndex((r) => r.rating === rating.rating);
+	});
+
+	$: ratings_pcts = ratings.map((rate) => {
+		const nbr_rating_similar = ratings.filter((r) => r.rating === rate.rating).length;
+		return {
+			rating: rate.rating,
+			pct: (nbr_rating_similar / ratings.length) * 100
+		};
+	});
 </script>
 
 {#if $show_modal}
@@ -44,13 +61,13 @@
 		>
 			Date de dernière mise à jour.
 		</Tooltip>
-		<Listgroup items={ratings} let:item class="mt-3 bg-transparent">
+		<Listgroup items={deduplicated_ratings} let:item class="mt-3 bg-transparent">
 			<div class="flex items-center space-x-4">
-				<Avatar class="flex-shrink-0 {rating_colors[item.value]} text-white">{item.name}</Avatar>
+				<Avatar class="flex-shrink-0 {rating_colors[item.rating]} text-white">{item.rating}</Avatar>
 				<div class="flex-1 min-w-0">
 					<p class="text-xxs text-white truncate">
-						{item.updated_at}
-						<span class="text-xxs" id="tooltip-{item.name}">
+						{item.ratedAt.toDate().toLocaleDateString()}
+						<span class="text-xxs" id="tooltip-{item.rating}">
 							<svg
 								class="w-[12px] inline h-[12px] text-gray-800 dark:text-white"
 								ariaHidden="true"
@@ -66,7 +83,7 @@
 					</p>
 				</div>
 				<div class="inline-flex items-center text-base font-semibold text-white">
-					{item.pct}
+					{format_pct(ratings_pcts.find((r) => r.rating === item.rating).pct)}%
 				</div>
 			</div>
 		</Listgroup>

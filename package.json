@@ -70,6 +70,7 @@
 		"url": "https://github.com/shinokada/flowbite-svelte-starter.git"
 	},
 	"dependencies": {
+		"crypto-js": "^4.1.1",
 		"firebase": "^9.23.0",
 		"firebase-admin": "^11.9.0"
 	}

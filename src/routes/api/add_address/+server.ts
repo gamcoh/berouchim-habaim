@@ -10,20 +10,38 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
 	const hash = createHash('sha256').update(name).digest('hex');
 
-	const doc = adminDB.collection('addresses').doc(hash);
-	const res = doc.set(
+	const batch = adminDB.batch();
+	const this_addr = adminDB.doc(`addresses/${hash}`);
+
+	batch.set(
+		this_addr,
 		{
 			name,
 			location: new GeoPoint(location.lat, location.lng),
 			lastUpdatedAt: Timestamp.now(),
 			ratings: FieldValue.arrayUnion({
 				rating,
-				ratedBy: ip,
 				ratedAt: Timestamp.now()
 			})
 		},
 		{ merge: true }
 	);
+
+	// Adding the udpatedBy
+	const updated_by_db = adminDB.doc(`updates_on_addresses/${hash}`);
+	batch.set(
+		updated_by_db,
+		{
+			name,
+			updates: FieldValue.arrayUnion({
+				ip,
+				updatedAt: Timestamp.now()
+			})
+		},
+		{ merge: true }
+	);
+
+	const res = await batch.commit();
 
 	if (!res) {
 		throw error(500, 'Error updating address');

@@ -4,6 +4,8 @@
 	import CustomCard from '$lib/CustomCard.svelte';
 	import { onMount } from 'svelte';
 	import { search_address } from '$lib/stores';
+	import { db } from '$lib/firestore';
+	import sha256 from 'crypto-js/sha256';
 
 	let ratings = [];
 	let address;
@@ -45,6 +47,21 @@
 			.catch((err) => {
 				address_found = false;
 				has_searched = err.status === 404;
+			});
+
+		const hash = sha256(address).toString();
+		db.collection('addresses')
+			.doc(hash)
+			.onSnapshot((doc) => {
+				if (!doc.exists) {
+					ratings = [];
+					address_found = false;
+					return;
+				}
+
+				address_found = true;
+				has_searched = true;
+				ratings = doc.data().ratings;
 			});
 	};
 
