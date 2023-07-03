@@ -6,12 +6,23 @@ const config = {
 
 	theme: {
 		colors: {
-			primary: '#446A68',
-			green: '#6EA743',
-			orange: '#F9C74F',
-			red: '#F94144'
+			primary: '#446A68'
 		},
 		extend: {
+			colors: {
+				green: {
+					500: '#6EA743',
+					'500/50': 'rgba(110, 167, 67, 0.5)'
+				},
+				orange: {
+					500: '#F9C74F',
+					'500/50': 'rgba(249, 199, 79, 0.5)'
+				},
+				red: {
+					500: '#F94144',
+					'500/50': 'rgba(249, 65, 68, 0.5)'
+				}
+			},
 			fontSize: {
 				xxs: '.55rem'
 			},

@@ -4,16 +4,14 @@
 
 	let rating_clicked = null;
 
-	const ratings = [
-		{ name: 'A', value: 'A' },
-		{ name: 'B', value: 'B' },
-		{ name: 'C', value: 'C' }
-	];
+	const ratings = [{ name: 'A' }, { name: 'B' }, { name: 'C' }];
 	const rating_colors = {
 		A: 'green-500',
-		B: 'yellow-500',
+		B: 'orange-500', // shadow-orange-500/50 bg-orange-500
 		C: 'red-500'
 	};
+
+	$: rating_color = `shadow-outline shadow-${rating_colors[rating_clicked]}/50 bg-${rating_colors[rating_clicked]}`;
 
 	const disableModal = () => {
 		show_modal.set(false);
@@ -78,20 +76,21 @@
 		</li>
 	</ul>
 
+	<h3 class="text-xl mt-5">Choisissez votre avis :</h3>
+	<p class="text-xxs mt-2"><i>Cliquez sur un avis pour le sélectionner</i></p>
+
 	<div class="flex flex-row mt-10 justify-center">
 		{#each ratings as rating}
 			<div class="flex flex-col mr-5" on:click={() => (rating_clicked = rating.name)}>
-				<Avatar
-					class="w-10 h-10 mb-2 cursor-pointer text-white
-          {rating_clicked == rating.name
-						? 'bg-' +
-						  rating_colors[rating.name] +
-						  ' ' +
-						  'shadow-outline shadow-' +
-						  rating_colors[rating.name] +
-						  '/50'
-						: 'avatar-rating'}">{rating.name}</Avatar
-				>
+				{#if rating_clicked == rating.name}
+					<Avatar class="w-10 h-10 mb-2 cursor-pointer text-white {rating_color}"
+						>{rating.name}</Avatar
+					>
+				{:else}
+					<Avatar class="w-10 h-10 mb-2 cursor-pointer text-white avatar-rating"
+						>{rating.name}</Avatar
+					>
+				{/if}
 			</div>
 		{/each}
 	</div>
