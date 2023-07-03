@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 .svelte-kit
+firebase-adminsdk.json

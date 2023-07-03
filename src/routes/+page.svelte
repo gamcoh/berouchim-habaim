@@ -1,21 +1,51 @@
 <script>
 	import { Input } from 'flowbite-svelte';
+	import { fade } from 'svelte/transition';
 	import CustomCard from '$lib/CustomCard.svelte';
 	import { onMount } from 'svelte';
+	import { search_address } from '$lib/stores';
 
-	const ratings = [
-		{ id: 1, name: 'A', value: 'A', updated_at: '2023-04-01', pct: '90%' },
-		{ id: 2, name: 'B', value: 'B', updated_at: '2023-04-01', pct: '5%' },
-		{ id: 3, name: 'C', value: 'C', updated_at: '2023-04-01', pct: '5%' }
-	];
-
-	const address = '1 rue de la paix, Paris';
+	let ratings = [];
+	let address;
+	let has_searched = false;
+	let address_found = false;
 	const loadAsync = (src) => {
 		const script = document.createElement('script');
 		script.src = src;
 		script.async = true;
 		script.defer = true;
 		document.head.appendChild(script);
+	};
+
+	const handlePlaceSelect = (autocomplete) => {
+		const addressObject = autocomplete.getPlace();
+		address = addressObject.formatted_address;
+
+		const data = {
+			name: address,
+			location: addressObject.geometry.location
+		};
+
+		search_address.set(data);
+
+		fetch('/api/addresses', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+			.then((res) => {
+				if (res.ok === false) {
+					let err = new Error(res);
+					err.status = res.status;
+					throw err;
+				}
+			})
+			.catch((err) => {
+				address_found = false;
+				has_searched = err.status === 404;
+			});
 	};
 
 	onMount(() => {
@@ -27,10 +57,7 @@
 		window.onLoaded = () => {
 			const input = document.querySelector('.search-address-input');
 			const autocomplete = new google.maps.places.Autocomplete(input);
-			autocomplete.addListener('place_changed', () => {
-				const place = autocomplete.getPlace();
-				console.log(place);
-			});
+			autocomplete.addListener('place_changed', () => handlePlaceSelect(autocomplete));
 		};
 	});
 </script>
@@ -40,6 +67,7 @@
 		type="text"
 		defaultClass="element w-full font-mono search-address-input"
 		placeholder="Recherchez une adresse"
+		value={address}
 	>
 		<svg
 			slot="right"
@@ -57,5 +85,7 @@
 		>
 	</Input>
 
-	<CustomCard {ratings} {address} />
+	{#if has_searched}
+		<CustomCard {ratings} />
+	{/if}
 </div>

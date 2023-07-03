@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Avatar, Button } from 'flowbite-svelte';
-
-	export let address: string;
+	import { show_modal, search_address, toasts } from '$lib/stores';
 
 	let rating_clicked = null;
 
@@ -11,14 +10,62 @@
 		{ name: 'C', value: 'C' }
 	];
 	const rating_colors = {
-		A: 'bg-green-500',
-		B: 'bg-yellow-500',
-		C: 'bg-red-500'
+		A: 'green-500',
+		B: 'yellow-500',
+		C: 'red-500'
+	};
+
+	const disableModal = () => {
+		show_modal.set(false);
+	};
+
+	const sendRating = () => {
+		if (!rating_clicked) {
+			// TODO: handle error
+			throw new Error('No rating clicked');
+		}
+
+		fetch('/api/add_address', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ ...$search_address, rating: rating_clicked })
+		})
+			.then((res) => {
+				if (res.ok === false) {
+					let err = new Error(res);
+					err.status = res.status;
+					throw err;
+				}
+
+				disableModal();
+				toasts.update((t) => [
+					...t,
+					{
+						message: 'Votre avis a bien été pris en compte !',
+						color: 'green'
+					}
+				]);
+			})
+			.catch((err) => {
+				// If the request is 404, then no address was found.
+				if (err.status === 404) {
+					has_searched = true;
+					address_found = false;
+				} else {
+					show_error_toast = true;
+					has_searched = false;
+					address_found = false;
+				}
+			});
 	};
 </script>
 
-<div class="card element p-7 mt-5">
-	<h2 class="text-xl">{address}</h2>
+<!-- veil -->
+<div class="fixed inset-0 z-10 bg-black bg-opacity-50 flex items-center justify-center" />
+<div class="card element p-7 mt-5 fixed z-50 w-96 left-0 right-0 m-auto">
+	<h2 class="text-xl">{$search_address.name}</h2>
 
 	<ul class="text-xs mt-3 leading-5 font-mono">
 		<li>
@@ -50,7 +97,7 @@
 	</div>
 
 	<div class="flex flex-row justify-between">
-		<Button class="mt-5 self-end" outline color="red">Annuler</Button>
-		<Button class="mt-5 self-end" outline color="light">Ajouter</Button>
+		<Button class="mt-5 self-end" outline on:click={disableModal} color="red">Annuler</Button>
+		<Button class="mt-5 self-end" outline on:click={sendRating} color="light">Ajouter</Button>
 	</div>
 </div>

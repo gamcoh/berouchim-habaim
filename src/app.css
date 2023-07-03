@@ -90,6 +90,10 @@ input.element:focus {
 	height: 0px;
 }
 
+[role='alert'] {
+	margin-bottom: 1rem;
+}
+
 @media (max-width: 500px) {
 	body {
 		background-image: url('images/background-mobile.jpg');

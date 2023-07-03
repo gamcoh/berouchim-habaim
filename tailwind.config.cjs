@@ -22,7 +22,7 @@ const config = {
 	},
 
 	plugins: [require('flowbite/plugin')],
-	darkMode: 'class'
+	darkMode: ['class', "[data-theme='dark']"]
 };
 
 module.exports = config;
