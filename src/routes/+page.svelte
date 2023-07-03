@@ -2,6 +2,7 @@
 	import { Input } from 'flowbite-svelte';
 	import { fade } from 'svelte/transition';
 	import CustomCard from '$lib/CustomCard.svelte';
+	import WelcomeMessage from '$lib/WelcomeMessage.svelte';
 	import { onMount } from 'svelte';
 	import { search_address } from '$lib/stores';
 	import { db } from '$lib/firestore';
@@ -104,5 +105,7 @@
 
 	{#if has_searched}
 		<CustomCard {ratings} />
+	{:else}
+		<WelcomeMessage />
 	{/if}
 </div>
