@@ -15,9 +15,19 @@
 	};
 
 	// Deduplicate ratings
-	$: deduplicated_ratings = ratings.filter((rating, index, self) => {
-		return index === self.findIndex((r) => r.rating === rating.rating);
-	});
+	// We need to group by rating and then take the latest rating for each group
+	// based on the ratedAt field.
+	$: deduplicated_ratings = ratings.reduce((acc, curr) => {
+		const existing_rating = acc.find((r) => r.rating === curr.rating);
+		if (existing_rating) {
+			if (existing_rating.ratedAt < curr.ratedAt) {
+				existing_rating.ratedAt = curr.ratedAt;
+			}
+		} else {
+			acc.push(curr);
+		}
+		return acc;
+	}, []);
 
 	$: ratings_pcts = ratings.map((rate) => {
 		const nbr_rating_similar = ratings.filter((r) => r.rating === rate.rating).length;

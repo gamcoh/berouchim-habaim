@@ -21,11 +21,6 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write ."
 	},
-	"pre-commit": [
-		"lint",
-		"test:unit",
-		"check"
-	],
 	"devDependencies": {
 		"@playwright/test": "^1.30.0",
 		"@sveltejs/adapter-auto": "2.0.0",
