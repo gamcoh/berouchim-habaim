@@ -1,6 +1,7 @@
 import firebase from 'firebase/compat/app';
 // Required for side-effects
 import 'firebase/compat/firestore';
+import 'firebase/compat/analytics';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDMeU9fbJ814uDP1kaPnbOVpdL5mdgO0Qs',
@@ -15,5 +16,11 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+let analytics;
+
 // Initialize Cloud Firestore and get a reference to the service
 export const db = firebase.firestore();
+if (typeof window !== 'undefined') {
+  analytics = firebase.analytics();
+}
+export const analyticsRef = analytics;

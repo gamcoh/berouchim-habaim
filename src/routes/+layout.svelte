@@ -3,6 +3,9 @@
 	import { toasts } from '$lib/stores';
 	import { fade } from 'svelte/transition';
 	import { Toast } from 'flowbite-svelte';
+  import { inject } from '@vercel/analytics';
+
+  inject({ mode: "production" });
 
 	// Remove toasts after 5 seconds
 	$: if ($toasts.length > 0) {
