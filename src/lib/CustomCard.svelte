@@ -2,7 +2,6 @@
 	import { Listgroup, Avatar, Button, Tooltip } from 'flowbite-svelte';
 	import AddRatingCard from '$lib/AddRatingCard.svelte';
 	import { show_modal, search_address } from '$lib/stores';
-	import { fade } from 'svelte/transition';
 
 	export let ratings: object[];
 	const rating_colors = {
@@ -30,9 +29,7 @@
 </script>
 
 {#if $show_modal}
-	<div transition:fade>
-		<AddRatingCard />
-	</div>
+	<AddRatingCard />
 {/if}
 
 <div class="card element p-7 mt-5">

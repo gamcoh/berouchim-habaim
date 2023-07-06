@@ -1,5 +1,5 @@
 <script>
-	import { Input } from 'flowbite-svelte';
+	import { Input, Spinner } from 'flowbite-svelte';
 	import { fade } from 'svelte/transition';
 	import CustomCard from '$lib/CustomCard.svelte';
 	import WelcomeMessage from '$lib/WelcomeMessage.svelte';
@@ -12,6 +12,7 @@
 	let address;
 	let has_searched = false;
 	let address_found = false;
+	let searching = false;
 	const loadAsync = (src) => {
 		const script = document.createElement('script');
 		script.src = src;
@@ -21,6 +22,7 @@
 	};
 
 	const handlePlaceSelect = (autocomplete) => {
+		searching = true;
 		const addressObject = autocomplete.getPlace();
 		address = addressObject.formatted_address;
 
@@ -57,11 +59,13 @@
 				if (!doc.exists) {
 					ratings = [];
 					address_found = false;
+					searching = false;
 					return;
 				}
 
 				address_found = true;
 				has_searched = true;
+				searching = false;
 				ratings = doc.data().ratings;
 			});
 	};
@@ -105,6 +109,10 @@
 
 	{#if has_searched}
 		<CustomCard {ratings} />
+	{:else if searching}
+		<div class="mt-10 flex justify-center">
+			<Spinner />
+		</div>
 	{:else}
 		<WelcomeMessage />
 	{/if}

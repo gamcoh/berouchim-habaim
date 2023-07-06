@@ -99,6 +99,6 @@ input.element:focus {
 		background-image: url('images/background-mobile.jpg');
 	}
 	.container {
-		margin-top: 50px;
+		margin-top: 20px;
 	}
 }

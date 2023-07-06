@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { Avatar, Button } from 'flowbite-svelte';
+	import { Avatar, Button, Spinner } from 'flowbite-svelte';
 	import { show_modal, search_address, toasts } from '$lib/stores';
 
 	let rating_clicked = null;
+	let sending_rating = false;
 
 	const ratings = [{ name: 'A' }, { name: 'B' }, { name: 'C' }];
 	const rating_colors = {
@@ -18,8 +19,11 @@
 	};
 
 	const sendRating = () => {
+		sending_rating = true;
 		if (!rating_clicked) {
 			// TODO: handle error
+			alert('Aucun avis sélectionné');
+			sending_rating = false;
 			throw new Error('No rating clicked');
 		}
 
@@ -37,6 +41,7 @@
 					throw err;
 				}
 
+				sending_rating = false;
 				disableModal();
 				toasts.update((t) => [
 					...t,
@@ -62,7 +67,7 @@
 
 <!-- veil -->
 <div class="fixed inset-0 z-10 bg-black bg-opacity-50 flex items-center justify-center" />
-<div class="card element p-7 mt-5 fixed z-50 w-96 left-0 right-0 m-auto">
+<div class="card element p-7 mt-5 fixed z-50 w-96 left-0 right-0 m-auto max-md:w-80">
 	<h2 class="text-xl">{$search_address.name}</h2>
 
 	<ul class="text-xs mt-3 leading-5 font-mono">
@@ -97,6 +102,13 @@
 
 	<div class="flex flex-row justify-between">
 		<Button class="mt-5 self-end" outline on:click={disableModal} color="red">Annuler</Button>
-		<Button class="mt-5 self-end" outline on:click={sendRating} color="light">Ajouter</Button>
+		<Button class="mt-5 self-end" outline on:click={sendRating} color="light">
+			{#if sending_rating}
+				<Spinner class="mr-3" size="4" />
+				Envoi en cours...
+			{:else}
+				Ajouter
+			{/if}
+		</Button>
 	</div>
 </div>
