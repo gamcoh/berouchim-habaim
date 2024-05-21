@@ -3,7 +3,7 @@
 
 	<p class="text-xs mt-3 leading-5 font-mono">
 		Nous sommes ravis de vous voir ici. Notre mission est de faciliter la recherche d'une adresse et
-		d'offrir des informations pertinentes sur le niveau de Kasher d'un immeuble. Vous voulez savoir
+		d'offrir des informations pertinentes sur le niveau de Kasheroute d'un immeuble. Vous voulez savoir
 		si la porte principale est robotisée ou si l'accès est facile pendant le jour de Shabbat ? Ne
 		cherchez pas plus loin, nous avons tout ce qu'il vous faut !
 	</p>

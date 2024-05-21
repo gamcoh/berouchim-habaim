@@ -131,3 +131,4 @@ dist
 
 .svelte-kit
 firebase-adminsdk.json
+.vercel
