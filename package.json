@@ -51,7 +51,7 @@
 	"type": "module",
 	"engines": {
 		"npm": ">=7.0.0",
-		"node": ">=16.0.0"
+		"node": "18.x"
 	},
 	"dependencies": {
 		"@auth0/auth0-spa-js": "^2.1.3",

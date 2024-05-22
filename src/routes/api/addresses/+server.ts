@@ -2,9 +2,16 @@ import { adminDB } from '$lib/services/firebase.server';
 import { error, json } from '@sveltejs/kit';
 import { Timestamp, GeoPoint } from 'firebase-admin/firestore';
 import type { RequestHandler } from './$types';
+import validateAccessToken from "../Utils";
 
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
-	const { name, location } = await request.json();
+	const { name, location, authAccessToken } = await request.json();
+  try {
+    await validateAccessToken(authAccessToken);
+  } catch (error) {
+    throw Error("Unauthorized");
+  }
+
 	const ip = getClientAddress();
 
 	// First we need to asynchronously add the search to the database

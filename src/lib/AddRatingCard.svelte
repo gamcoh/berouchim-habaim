@@ -2,6 +2,7 @@
 	import { Avatar, Button, Spinner } from 'flowbite-svelte';
 	import { show_modal, search_address, toasts } from '$lib/stores';
 
+  export let access_token: string;
 	let rating_clicked = null;
 	let sending_rating = false;
 
@@ -32,7 +33,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ ...$search_address, rating: rating_clicked })
+			body: JSON.stringify({ ...$search_address, rating: rating_clicked, authAccessToken: access_token })
 		})
 			.then((res) => {
 				if (res.ok === false) {

@@ -3,9 +3,16 @@ import { error, json } from '@sveltejs/kit';
 import { Timestamp, GeoPoint, FieldValue } from 'firebase-admin/firestore';
 import { createHash } from 'crypto';
 import type { RequestHandler } from './$types';
+import validateAccessToken from "../Utils";
 
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
-	const { name, location, rating } = await request.json();
+	const { name, location, rating, authAccessToken } = await request.json();
+  try {
+    await validateAccessToken(authAccessToken);
+  } catch (error) {
+    throw Error("Unauthorized");
+  }
+
 	const ip = getClientAddress();
 
 	const hash = createHash('sha256').update(name).digest('hex');

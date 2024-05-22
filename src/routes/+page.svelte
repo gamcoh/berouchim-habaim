@@ -1,10 +1,15 @@
+<svelte:head>
+  <title>Bercouchim Habaim</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+</svelte:head>
+
 <script>
 	import { Input, Spinner } from 'flowbite-svelte';
   import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import CustomCard from '$lib/CustomCard.svelte';
 	import WelcomeMessage from '$lib/WelcomeMessage.svelte';
-	import { search_address } from '$lib/stores';
+	import { search_address, toasts } from '$lib/stores';
 	import { db } from '$lib/firestore';
 	import sha256 from 'crypto-js/sha256';
   import JConnectLogo from "../images/logo-jconnect.png";
@@ -13,6 +18,11 @@
   import { createAuth0Client } from "@auth0/auth0-spa-js";
 
   let auth0;
+  let isAuthenticated = false;
+  let buttonText = "Se connecter avec JConnect";
+  let buttonIsActive = true;
+  let hasFound = false;
+  let authAT;
 
 	let ratings = [];
 	let address;
@@ -30,17 +40,20 @@
   const login = async () => {
     await auth0.loginWithPopup();
     const user = await auth0.getUser();
-    console.log(user);
+    buttonText = "Connecté en tant que " + user.name;
+    buttonIsActive = false;
+    isAuthenticated = true;
   };
 
-	const handlePlaceSelect = (autocomplete) => {
+	const handlePlaceSelect = async (autocomplete) => {
 		searching = true;
 		const addressObject = autocomplete.getPlace();
 		address = addressObject.formatted_address;
 
 		const data = {
 			name: address,
-			location: addressObject.geometry.location
+			location: addressObject.geometry.location,
+      authAccessToken: await auth0.getTokenSilently(),
 		};
 
 		search_address.set(data);
@@ -58,10 +71,19 @@
 					err.status = res.status;
 					throw err;
 				}
+        
+        hasFound = true;
 			})
 			.catch((err) => {
 				address_found = false;
 				has_searched = err.status === 404;
+				toasts.update((t) => [
+					...t,
+					{
+						message: 'Une erreur est survenue lors de la recherche de l\'adresse. Veuillez réessayer plus tard.',
+						color: 'red'
+					}
+				]);
 			});
 
 		const hash = sha256(address).toString();
@@ -83,6 +105,26 @@
 	};
 
 	onMount(async () => {
+    auth0 = await createAuth0Client({
+      domain: "jconnect.eu.auth0.com",
+      clientId: "nxMunD2S0w3B1Eqf3kCTb9f4kIDvNbw8",
+      redirect_uri: "http://127.0.0.1:5173/",
+      cacheLocation: 'localstorage',
+      authorizationParams: {
+        audience: "https://api.auth0.jconnect.cloud",
+        scope: "openid profile read:profile_picture",
+        ui_locales: "fr",
+      },
+    });
+
+    isAuthenticated = await auth0.isAuthenticated();
+    if (isAuthenticated) {
+      authAT = await auth0.getTokenSilently();
+      const user = await auth0.getUser();
+      buttonText = "Connecté en tant que " + user.name;
+      buttonIsActive = false;
+    }
+
 		// Load the Google Maps Platform JS API script asynchronously.
 		loadAsync(
 			`//maps.googleapis.com/maps/api/js?key=AIzaSyCccjLlNycBKO0fTfUJglwol18iECMXcpM&libraries=places&callback=onLoaded`
@@ -93,25 +135,18 @@
 			const autocomplete = new google.maps.places.Autocomplete(input);
 			autocomplete.addListener('place_changed', () => handlePlaceSelect(autocomplete));
 		};
-
-    auth0 = await createAuth0Client({
-      domain: "jconnect.eu.auth0.com",
-      clientId: "nxMunD2S0w3B1Eqf3kCTb9f4kIDvNbw8",
-      authorizationParams: {
-        audience: "https://api.auth0.jconnect.cloud",
-        scope: "openid profile read:profile_picture",
-        redirect_uri: "http://127.0.0.1:5173/",
-        ui_locales: "fr",
-      }
-    });
 	});
 </script>
 
 <div class="addresses w-full">
-  <div class=" mb-5 text-center">
+  <div class="mb-5 text-center" on:click={() => {
+    // refresh the page
+    window.location.reload();
+  }}>
     <img src={BerouchimLogo} class="w-20 h-20 mx-auto" alt="Berouchim Logo" />
   </div>
 
+  {#if isAuthenticated}
 	<Input
 		type="text"
 		defaultClass="element w-full font-mono search-address-input"
@@ -133,7 +168,9 @@
 			/></svg
 		>
 	</Input>
+  {/if}
 
+  {#if !hasFound}
   <div class="card element p-7 mt-5 w-[700px] -ml-[200px] max-md:w-full max-md:ml-0">
     <p class="text-sm">Connectez-vous avant de pouvoir utiliser cette application</p>
 
@@ -143,15 +180,19 @@
     </p>
 
     <div class="mt-3 text-right">
-      <button on:click={login} type="button" class="text-white bg-[#2557D6] hover:bg-[#2557D6]/90 focus:ring-4 focus:ring-[#2557D6]/50 focus:outline-none font-medium rounded-lg text-xs px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#2557D6]/50 me-2 mb-2">
+      <button on:click={login} type="button" class="text-white bg-[#003049] hover:bg-[#003049]/90 focus:ring-4 focus:outline-none font-medium rounded-lg text-xs p-2 text-center inline-flex items-center me-2 mb-2" class:bg-[#778da9]={!buttonIsActive} class:hover:bg-[#778da9]={!buttonIsActive} disabled={!buttonIsActive}>
         <img src={JConnectLogo} class="w-5 h-5 mr-2" alt="JConnect Logo" />
-        Se connecter avec JConnect
+        {buttonText}
       </button>
+      <p class="text-xs">Pas encore de compte ? <a href="https://jconnect.cloud/auth/register" class="text-[#90e0ef] underline">Créez-en un</a><br/>
+        C'est rapide et totalement gratuit !
+      </p>
     </div>
   </div>
+  {/if}
 
 	{#if has_searched}
-		<CustomCard {ratings} />
+		<CustomCard {ratings} access_token={authAT} />
 	{:else if searching}
 		<div class="mt-10 flex justify-center">
 			<Spinner />

@@ -4,6 +4,7 @@
 	import { show_modal, search_address } from '$lib/stores';
 
 	export let ratings: object[];
+  export let access_token: string;
 	const rating_colors = {
 		A: 'bg-green-500',
 		B: 'bg-yellow-500',
@@ -39,7 +40,7 @@
 </script>
 
 {#if $show_modal}
-	<AddRatingCard />
+	<AddRatingCard {access_token} />
 {/if}
 
 <div class="card element p-7 mt-5">
