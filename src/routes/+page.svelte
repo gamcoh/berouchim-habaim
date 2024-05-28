@@ -43,6 +43,10 @@
     buttonText = "Connecté en tant que " + user.name;
     buttonIsActive = false;
     isAuthenticated = true;
+
+    setTimeout(() => {
+       chargeAutocomplete();
+    }, 1000);
   };
 
 	const handlePlaceSelect = async (autocomplete) => {
@@ -71,20 +75,14 @@
 					err.status = res.status;
 					throw err;
 				}
-        
-        hasFound = true;
 			})
 			.catch((err) => {
 				address_found = false;
 				has_searched = err.status === 404;
-				toasts.update((t) => [
-					...t,
-					{
-						message: 'Une erreur est survenue lors de la recherche de l\'adresse. Veuillez réessayer plus tard.',
-						color: 'red'
-					}
-				]);
-			});
+			})
+      .finally(() => {
+        hasFound = true;
+      });
 
 		const hash = sha256(address).toString();
 		db.collection('addresses')
@@ -103,6 +101,12 @@
 				ratings = doc.data().ratings;
 			});
 	};
+
+  const chargeAutocomplete = async () => {
+    const input = document.querySelector('.search-address-input');
+    const autocomplete = new google.maps.places.Autocomplete(input);
+    autocomplete.addListener('place_changed', () => handlePlaceSelect(autocomplete));
+  };
 
 	onMount(async () => {
     auth0 = await createAuth0Client({
@@ -131,9 +135,7 @@
 		);
 
 		window.onLoaded = () => {
-			const input = document.querySelector('.search-address-input');
-			const autocomplete = new google.maps.places.Autocomplete(input);
-			autocomplete.addListener('place_changed', () => handlePlaceSelect(autocomplete));
+      chargeAutocomplete();
 		};
 	});
 </script>
@@ -184,7 +186,7 @@
         <img src={JConnectLogo} class="w-5 h-5 mr-2" alt="JConnect Logo" />
         {buttonText}
       </button>
-      <p class="text-xs">Pas encore de compte ? <a href="https://jconnect.cloud/auth/register" class="text-[#90e0ef] underline">Créez-en un</a><br/>
+      <p class="text-xs">Pas encore de compte ? <a href="https://jconnect.cloud/auth/register?utm_source=berouchim-habaim&utm_medium=sso&utm_campaign=register" class="text-[#90e0ef] underline">Créez-en un</a><br/>
         C'est rapide et totalement gratuit !
       </p>
     </div>
