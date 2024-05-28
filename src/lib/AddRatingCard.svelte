@@ -68,7 +68,7 @@
 
 <!-- veil -->
 <div class="fixed inset-0 z-10 bg-black bg-opacity-50 flex items-center justify-center" />
-<div class="card element p-7 mt-5 fixed z-50 w-96 left-0 right-0 m-auto max-md:w-80">
+<div class="card element p-7 absolute z-50 w-96 left-0 right-0 top-0 bottom-0 h-fit m-auto max-md:w-80">
 	<h2 class="text-xl">{$search_address.name}</h2>
 
 	<ul class="text-xs mt-3 leading-5 font-mono">
