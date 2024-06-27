@@ -178,7 +178,9 @@
 
     <p class="text-xs mt-3 leading-5 font-mono">
       Cette application met à disposition des informations sensibles sur les immeubles. Pour garantir la confidentialité des données, nous vous demandons de vous connecter avant de pouvoir utiliser cette application.<br/>
-      Utilisez l'application JConnect<sup>©</sup> pour assurer la sécurité de vos données.
+      Utilisez le service JConnect<sup>©</sup> pour assurer la sécurité de vos données.<br/><br/>
+
+      <i>JConnect est un service de connexion sécurisé et gratuit, développé et utilisé par les fondateurs de Berouchim Habaim pour garantir la sécurité de nos données pour vous et toute notre communauté.</i>
     </p>
 
     <div class="mt-3 text-right">
@@ -186,7 +188,7 @@
         <img src={JConnectLogo} class="w-5 h-5 mr-2" alt="JConnect Logo" />
         {buttonText}
       </button>
-      <p class="text-xs">Pas encore de compte ? <a href="https://jconnect.cloud/auth/register?utm_source=berouchim-habaim&utm_medium=sso&utm_campaign=register" class="text-[#90e0ef] underline">Créez-en un</a><br/>
+      <p class="text-xs">Pas encore de compte ? <a href="https://jconnect.cloud/auth/register?utm_source=berouchim-habaim&utm_medium=sso&utm_campaign=register" class="text-[#90e0ef] underline" target="_blank">Créez-en un</a><br/>
         C'est rapide et totalement gratuit !
       </p>
     </div>
