@@ -112,7 +112,7 @@
     auth0 = await createAuth0Client({
       domain: "jconnect.eu.auth0.com",
       clientId: "nxMunD2S0w3B1Eqf3kCTb9f4kIDvNbw8",
-      redirect_uri: "http://127.0.0.1:5173/",
+      redirect_uri: window.location.origin,
       cacheLocation: 'localstorage',
       authorizationParams: {
         audience: "https://api.auth0.jconnect.cloud",
